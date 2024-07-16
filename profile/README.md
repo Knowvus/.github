@@ -10,10 +10,31 @@
 🍪 Fun facts - what is your team's favorite snack?
 🧙 Remember, you can do mighty things with the power of [Markdown](https://docs.github.com/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
 -->
-
 ------------------------------------------------------------------------------------------------------------------------------
-# Directory Structure
+# Knowvus - Knowledge-as-a-Service
 
+## COMPONENTS
+## INFRASTRUCTURE
+- [Duke](https://github.com/Knowvus/Duke) - Server
+## FEATURES
+- [Tassadar](https://github.com/Knowvus/Tassadar) - Knowledge Framework
+- [Fenix](https://github.com/Knowvus/Fenix) - Frame Processing, Semantic Process & Vector Embedding
+- [Overmind](https://github.com/Knowvus/Overmind) - Modal Recorder
+## STORAGE
+- [Kerrigan](https://github.com/Knowvus/Kerrigan) - Postgres
+- [Zeratul](https://github.com/Knowvus/Zeratul) - Milvus
+## OBSERVABILITY
+- [Artanis](https://github.com/Knowvus/Artanis) - Observability
+------------------------------------------------------------------------------------------------------------------------------
+## References
+- [Lucid](https://lucid.app/lucidchart/27a4f1ab-1925-4b57-b286-d59169d5385b/edit?invitationId=inv_c172e4c8-e0a9-4258-a836-6ee22863362c&page=qAbGdBw9_a6I#)
+## INTEGRATIONS
+- Digital Ocean -  Virtual Servers - IaaS
+- Cloudflare    -  Hosting
+- Github        -  Codebase
+- Docker        -  Deployment
+------------------------------------------------------------------------------------------------------------------------------
+# DIRECTORY STRUCTURE (Template)
 ```
 app/                            :::Top-Level Directory
 ├── .vscode/                    :::VSCode Configuration Files
@@ -55,17 +76,12 @@ app/                            :::Top-Level Directory
 │  └── index.js                 :::Main Index JavaScript
 ├── package-lock.json           :::Package Lock File
 ├── package.json                :::Package Configuration File
-env/                            :::Environment Variables
 .gitignore                      :::Git Ignore File
-docker-compose.yml              :::Docker Compose Configuration
 README.md                       :::Readme File
-requirements.txt                :::Python Requirements File
 ```
-
 ------------------------------------------------------------------------------------------------------------------------------
 # v1.0 Goal
 
 Allow user to:
 [ADD USE CASES AS CI/CD ARE TIED TO IT]
-
 ------------------------------------------------------------------------------------------------------------------------------
