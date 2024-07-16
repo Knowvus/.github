@@ -21,7 +21,7 @@ TBD
 
 **INFRASTRUCTURE**
 
-- [Duke](https://github.com/Knowvus/Duke) - Server
+- [Duke](https://github.com/Knowvus/Duke) - Server - Container - Droplet: 1vCPU / 512MB / 10 GB Disk / 0.5 TB / ubuntu 24.04 (LTS) x64 - $4/mo + $0.018/hr
 
 **FEATURES**
 - [Tassadar](https://github.com/Knowvus/Tassadar) - Knowledge Framework
@@ -29,12 +29,35 @@ TBD
 - [Overmind](https://github.com/Knowvus/Overmind) - Modal Recorder
 
 **STORAGE**
-- [Kerrigan](https://github.com/Knowvus/Kerrigan) - Postgres
+- [Kerrigan](https://github.com/Knowvus/Kerrigan) - Postgres - Container - Droplet: 1vCPU / 2GB / 50 GB Disk / 2 TB / ubuntu 24.04 (LTS) x64 - $12/mo + $0.018/hr
 - [Zeratul](https://github.com/Knowvus/Zeratul) - Milvus
 
 **OBSERVABILITY**
 - [Artanis](https://github.com/Knowvus/Artanis) - Observability
 
+## MONTHLY COST TO OPERATE
+**FIXED**
+```
+Duke-COST:               $   4.00
+Kerrigan-COST:           $  12.00
+Duke-TRANSFER-LIMIT:          0.5 TB
+Kerrigan-TRANSFER-LIMIT:      2.0 TB
+```
+**VARIABLE**
+```
+Duke-RATE-HR:            $  0.018
+Kerrigan-RATE-HR:        $  0.018
+Duke-VOLUME:                  1.0 TB <VALIDATE>
+Kerrigan-VOLUME:              1.0 TB <VALIDATE>
+Duke-COST:               $ 500.00    <VALIDATE>
+Kerrigan-COST:           $ 100.00    <VALIDATE> 
+```
+**TOTAL**
+```
+Fixed:                   $  20
+Variable:                $ 600
+Total:                   $ 620
+```
 # DIRECTORY STRUCTURE (Template)
 ```
 app/                            :::Top-Level Directory
