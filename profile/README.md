@@ -35,6 +35,9 @@ TBD
 **OBSERVABILITY**
 - [Artanis](https://github.com/Knowvus/Artanis) - Observability
 
+**Platform Tools**
+- [Duran](https://github.com/Knowvus/Duran) - CICD Automation
+
 ## MONTHLY COST TO OPERATE
 **FIXED**
 ```
