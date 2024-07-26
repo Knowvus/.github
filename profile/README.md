@@ -31,9 +31,9 @@ Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
 **Platform Tools**
 - [Duran](https://github.com/Knowvus/Duran)       -   CICD Automation
 
-## ARCHITECTURE
+## [Architectural Decision Record](https://github.com/Knowvus/.github-private/blob/main/documentation/ARD-%7BTemplate%7D.md)
 
-- [Architectural Decision Record](https://github.com/Knowvus/.github-private/blob/main/documentation/ARD-%7BTemplate%7D.md) - We use ADRs to document and communicate significant architectural decisions to ensure clarity, consistency, and informed decision-making across the organization.
+We use ADRs to document and communicate significant architectural decisions to ensure clarity, consistency, and informed decision-making across the organization.
 
 - **Context**: Background information and the rationale behind the decision.
 - **Decision**: A clear statement of the chosen architectural decision.
