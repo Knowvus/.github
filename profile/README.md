@@ -15,6 +15,7 @@ Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
 👩‍💻 **RESOURCES**
 
 - [Lucid](https://lucid.app/lucidchart/27a4f1ab-1925-4b57-b286-d59169d5385b/edit?invitationId=inv_c172e4c8-e0a9-4258-a836-6ee22863362c&page=qAbGdBw9_a6I#) - Master Architecture Diagram
+
   (+) [Eraser](https://app.eraser.io/workspace/QFzM4xawEp5SQTKiSW56) - Diagram Accelerator (Reduce Cycle Time via AI for Pareto Start)
 - [Digital Ocean](https://DigitalOcean.com)       -  Infrastructure-as-a-Service           (Compute, Storage [RAM, SSD, CPU, GPU, NPU])
 - [Cloud Flare](https://Cloudflare.com)           -  Hosting
