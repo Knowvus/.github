@@ -2,7 +2,33 @@
 
 🙋‍♀️ **INTRODUCTION**
 
-Knowvus synthesizes org-wide data and deliveres relevant insights in real-time. 
+*Problem*: Documenting learnings and planning projects is inefficent due to data silos.
+
+*Solution*: Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
+
+**MILESTONES**
+
+Feature: Launch CLI Server-DB Interface
+1) Duke       [Server]
+- [ ] **Initialize Server**
+- [ ] **Endpoints**
+  - [ ] /create-user
+    -  [ ] _Data Validation: Check for Duplicates_
+  - [ ] /create-task
+- [ ]  **Logging**
+  - [ ] Initialization
+  - [ ] Endpoints
+    - [ ] Logging Payload
+    - [ ]  User_IP
+    - [ ]  User_Email
+    - [ ]  Datetime_Stamp
+    - [ ]  Service_Name
+        
+3) Artanis    [Observability]
+4)   
+5) Kerrigan   [Postgres]
+
+
 
 ## OVERVIEW
 
