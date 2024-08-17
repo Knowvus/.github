@@ -1,17 +1,16 @@
 ## Welcome to the team 🙌
 
+🙋‍♀️ **INTRODUCTION**
+
+*Problem*: Documenting learnings and planning projects is inefficent due to data silos.
+*Solution*: Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
+
 ## Table of Contents
-- [Introduction](#introudction)
+- [Prerequisites](#prerequisites)
 - [Setup](#setup)
 - [Deployment](#deployment)
 
-🙋‍♀️ **INTRODUCTION**
-
-*Problem*: Documenting learnings and planning projects is inefficent due to data silos.
-
-*Solution*: Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
-
-## How to Deploy to a DigitalOcean Droplet
+## How to CLI Deploy to a DigitalOcean Droplet
 
 This guide explains how to use the provided CLI commands to deploy your application to a DigitalOcean Droplet.
 
@@ -22,46 +21,7 @@ This guide explains how to use the provided CLI commands to deploy your applicat
 3. **Docker Hub Account**: Ensure your Docker image is pushed to Docker Hub.
 4. **Infisical Account**: Ensure you have an Infisical account and project token.
 
-### [Setup] [#introduction]
-
-1. **Generate SSH Key**:
-```
-   ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-2. Add the public key to your DigitalOcean Droplet:
-```
-cat ~/.ssh/id_ed25519.pub | ssh root@<DROPLET_IP> 'cat >> ~/.ssh/authorized_keys'
-```
-
-4. Test the SSH connection:
-```
-ssh -i ~/.ssh/id_ed25519 root@<DROPLET_IP>
-```
-
-5. Encode the private key in base64:
-```
-base64 -w 0 ~/.ssh/id_ed25519 > key_base64.txt
-```
-
-🙋‍♀️ **INTRODUCTION**
-
-*Problem*: Documenting learnings and planning projects is inefficent due to data silos.
-
-*Solution*: Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
-
-## How to Deploy to a DigitalOcean Droplet
-
-This guide explains how to use the provided CLI commands to deploy your application to a DigitalOcean Droplet.
-
-### Prerequisites
-
-1. **DigitalOcean Droplet**: Ensure you have a running Droplet.
-2. **SSH Key**: Generate an SSH key pair and add the public key to your Droplet's `~/.ssh/authorized_keys`.
-3. **Docker Hub Account**: Ensure your Docker image is pushed to Docker Hub.
-4. **Infisical Account**: Ensure you have an Infisical account and project token.
-
-### [Setup] [#Setup]
+### [Setup]
 
 1. **Generate SSH Key**:
 ```
