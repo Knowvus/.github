@@ -1,11 +1,155 @@
 ## Welcome to the team 🙌
 
+## Table of Contents
+- [Introduction](#introudction)
+- [Setup](#setup)
+- [Deployment](#deployment)
+
 🙋‍♀️ **INTRODUCTION**
 
 *Problem*: Documenting learnings and planning projects is inefficent due to data silos.
 
 *Solution*: Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
 
+## How to Deploy to a DigitalOcean Droplet
+
+This guide explains how to use the provided CLI commands to deploy your application to a DigitalOcean Droplet.
+
+### Prerequisites
+
+1. **DigitalOcean Droplet**: Ensure you have a running Droplet.
+2. **SSH Key**: Generate an SSH key pair and add the public key to your Droplet's `~/.ssh/authorized_keys`.
+3. **Docker Hub Account**: Ensure your Docker image is pushed to Docker Hub.
+4. **Infisical Account**: Ensure you have an Infisical account and project token.
+
+### [Setup] [#introduction]
+
+1. **Generate SSH Key**:
+```
+   ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+2. Add the public key to your DigitalOcean Droplet:
+```
+cat ~/.ssh/id_ed25519.pub | ssh root@<DROPLET_IP> 'cat >> ~/.ssh/authorized_keys'
+```
+
+4. Test the SSH connection:
+```
+ssh -i ~/.ssh/id_ed25519 root@<DROPLET_IP>
+```
+
+5. Encode the private key in base64:
+```
+base64 -w 0 ~/.ssh/id_ed25519 > key_base64.txt
+```
+
+🙋‍♀️ **INTRODUCTION**
+
+*Problem*: Documenting learnings and planning projects is inefficent due to data silos.
+
+*Solution*: Knowvus synthesizes org-wide data and deliveres relevant insights in real-time.
+
+## How to Deploy to a DigitalOcean Droplet
+
+This guide explains how to use the provided CLI commands to deploy your application to a DigitalOcean Droplet.
+
+### Prerequisites
+
+1. **DigitalOcean Droplet**: Ensure you have a running Droplet.
+2. **SSH Key**: Generate an SSH key pair and add the public key to your Droplet's `~/.ssh/authorized_keys`.
+3. **Docker Hub Account**: Ensure your Docker image is pushed to Docker Hub.
+4. **Infisical Account**: Ensure you have an Infisical account and project token.
+
+### [Setup] [#Setup]
+
+1. **Generate SSH Key**:
+```
+   ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+2. Add the public key to your DigitalOcean Droplet:
+```
+cat ~/.ssh/id_ed25519.pub | ssh root@<DROPLET_IP> 'cat >> ~/.ssh/authorized_keys'
+```
+
+4. Test the SSH connection:
+```
+ssh -i ~/.ssh/id_ed25519 root@<DROPLET_IP>
+```
+
+5. Encode the private key in base64:
+```
+base64 -w 0 ~/.ssh/id_ed25519 > key_base64.txt
+```
+
+6. Set up Infisical:
+- Install Infisical CLI:
+```
+npm install -g infisical
+- Authenticate with Infisical:
+```
+infisical login --token <YOUR_INFISICAL_PROJECT_TOKEN>```
+
+6. Store the SSH Key in Infisical:
+- Add the base64 encoded SSH private key to Infisical:
+```
+infisical secret set DROPLET_SSH_BASE64 --value "$(cat key_base64.txt)"
+```
+
+7. Store the Known Hosts in Infiscal
+-  Fetch the known hosts and add them to Infisical:
+```
+ssh-keyscan <DROPLET_IP> > known_hosts.txt
+infisical secret set KNOWN_HOSTS --value "$(cat known_hosts.txt)"
+```
+
+8. Store the Droplet IP in Infiscal
+- Add the Droplet IP to Infisical:
+```
+infiscal secret set DROPLET_IP --value "<DROPLET_IP>"
+```
+
+### Deployment
+
+1. Fetch secrets from Infisical:
+```
+infisical pull --env production
+```
+
+3. Set up SSH key:
+```
+echo "$DROPLET_SSH_BASE64" | base64 --decode > key.pem
+chmod 600 key.pem
+```
+
+4. Add known hosts:
+```
+mkdir -p ~/.ssh
+echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+```
+
+5. Deploy to DigitalOcean Droplet:
+```
+ssh -i key.pem -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$DROPLET_IP << 'EOF'
+  set -e
+  docker pull your-dockerhub-username/your-app:latest
+  docker stop your-container-name || true
+  docker rm your-container-name || true
+  docker run -d -p 8000:8000 --name your-container-name your-dockerhub-username/your-app:latest
+EOF
+```
+
+
+
+
+
+
+
+
+
+
+---
 **MILESTONES**
 
 Feature: Launch CLI Server-DB Interface
