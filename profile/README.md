@@ -9,7 +9,8 @@
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
 - [Deployment](#deployment)
-
+- [Infrastructure](#infrastructure)
+- 
 ## How to CLI Deploy to a DigitalOcean Droplet
 
 This guide explains how to use the provided CLI commands to deploy your application to a DigitalOcean Droplet.
@@ -110,6 +111,14 @@ EOF
 
 
 ---
+## Infrastructure
+
+1. Duke
+- IP: 10.116.0.2
+Kerrigan
+- IP: 10.17.0.5
+
+
 **MILESTONES**
 
 Feature: Launch CLI Server-DB Interface
