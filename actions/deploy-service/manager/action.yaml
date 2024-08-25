@@ -1,0 +1,80 @@
+name: 'Deploy Duke as Docker Swarm Manager'
+description: 'Deploy the Duke project as the manager of the Docker Swarm network'
+inputs:
+  docker_username:
+    description: 'Docker Hub username'
+    required: true
+  docker_password:
+    description: 'Docker Hub password'
+    required: true
+  docker_image:
+    description: 'Docker image to deploy'
+    required: true
+  infisical_client_id:
+    description: 'Infisical Machine Identity Client ID'
+    required: true
+  infisical_client_secret:
+    description: 'Infisical Machine Identity Client Secret'
+    required: true
+  project_id:
+    description: 'Infisical Project ID'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.docker_username }}
+        password: ${{ inputs.docker_password }}
+
+    - name: Pull Docker Image
+      shell: bash
+      run: docker pull ${{ inputs.docker_image }}
+
+    - name: Install Infisical CLI
+      shell: bash
+      run: |
+        curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | sudo -E bash
+        sudo apt-get update && sudo apt-get install -y infisical
+
+    - name: Authenticate with Infisical
+      shell: bash
+      run: |
+        echo "INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain)" >> $GITHUB_ENV
+
+    - name: Initialize Docker Swarm Manager
+      shell: bash
+      run: |
+        docker swarm init
+        echo "MANAGER_TOKEN=$(docker swarm join-token -q manager)" >> $GITHUB_ENV
+
+    - name: Save Swarm Join Token to Infisical
+      shell: bash
+      run: |
+        infisical secrets set DOCKER_SWARM_MANAGER_TOKEN="${{ env.MANAGER_TOKEN }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
+
+    - name: Deploy Duke as Docker Service
+      shell: bash
+      run: |
+        docker service create --name duke \
+          --network hyperion \
+          -p 8080:8080 \
+          ${{ inputs.docker_image }}
+
+    - name: Check if Duke Service is Running
+      shell: bash
+      run: |
+        sleep 10
+        if [ "$(docker service ls --filter name=duke -q)" ]; then
+          echo "Duke service is running successfully."
+          docker service logs duke
+        else
+          echo "Duke service failed to start. Checking logs..."
+          docker service logs duke
+          exit 1
+        fi

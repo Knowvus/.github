@@ -1,0 +1,103 @@
+name: 'Deploy Service as Docker Swarm Member'
+description: 'Deploy a service as a member of the Docker Swarm network managed by Duke'
+inputs:
+  docker_username:
+    description: 'Docker Hub username'
+    required: true
+  docker_password:
+    description: 'Docker Hub password'
+    required: true
+  docker_image:
+    description: 'Docker image to deploy'
+    required: true
+  infisical_client_id:
+    description: 'Infisical Machine Identity Client ID'
+    required: true
+  infisical_client_secret:
+    description: 'Infisical Machine Identity Client Secret'
+    required: true
+  manager_ip:
+    description: 'IP address of the Docker Swarm Manager'
+    required: true
+  project_id:
+    description: 'Infisical Project ID'
+    required: true
+  pg_user:
+    description: 'PostgreSQL username (if deploying PostgreSQL)'
+    required: false
+  pg_password:
+    description: 'PostgreSQL password (if deploying PostgreSQL)'
+    required: false
+  pg_database:
+    description: 'PostgreSQL database name (if deploying PostgreSQL)'
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.docker_username }}
+        password: ${{ inputs.docker_password }}
+
+    - name: Pull Docker Image
+      shell: bash
+      run: docker pull ${{ inputs.docker_image }}
+
+    - name: Install Infisical CLI
+      shell: bash
+      run: |
+        curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | sudo -E bash
+        sudo apt-get update && sudo apt-get install -y infisical
+
+    - name: Authenticate with Infisical
+      shell: bash
+      run: |
+        echo "INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain)" >> $GITHUB_ENV
+
+    - name: Join Docker Swarm Network
+      shell: bash
+      run: |
+        TOKEN=$(infisical secrets get DOCKER_SWARM_MANAGER_TOKEN --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }})
+        docker swarm join --token $TOKEN ${{ inputs.manager_ip }}:2377
+
+    - name: Deploy Service as Docker Swarm Member
+      shell: bash
+      run: |
+        if [[ "${{ inputs.docker_image }}" == "postgres:latest" ]]; then
+          docker service create --name postgres \
+            --network hyperion \
+            --env POSTGRES_USER=${{ inputs.pg_user }} \
+            --env POSTGRES_PASSWORD=${{ inputs.pg_password }} \
+            --env POSTGRES_DB=${{ inputs.pg_database }} \
+            --mount type=volume,source=pgdata,target=/var/lib/postgresql/data \
+            -p 5433:5432 \
+            ${{ inputs.docker_image }}
+        else
+          docker service create --name service \
+            --network hyperion \
+            ${{ inputs.docker_image }}
+        fi
+
+    - name: Check if Service is Running
+      shell: bash
+      run: |
+        sleep 10
+        if [[ "${{ inputs.docker_image }}" == "postgres:latest" ]]; then
+          SERVICE_NAME="postgres"
+        else
+          SERVICE_NAME="service"
+        fi
+
+        if [ "$(docker service ls --filter name=$SERVICE_NAME -q)" ]; then
+          echo "$SERVICE_NAME service is running successfully."
+          docker service logs $SERVICE_NAME
+        else
+          echo "$SERVICE_NAME service failed to start. Checking logs..."
+          docker service logs $SERVICE_NAME
+          exit 1
+        fi
