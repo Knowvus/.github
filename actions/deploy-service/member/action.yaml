@@ -31,6 +31,9 @@ inputs:
   pg_database:
     description: 'PostgreSQL database name (if deploying PostgreSQL)'
     required: false
+  ca_fingerprint:
+    description: 'CA fingerprint of the Docker Swarm manager'
+    required: true
 
 runs:
   using: "composite"
@@ -78,32 +81,24 @@ runs:
         fi
         echo "INFISICAL_TOKEN=$INFISICAL_TOKEN" >> $GITHUB_ENV
 
-    - name: Retrieve Swarm Join Token and CA Fingerprint from Infisical
+    - name: Retrieve Swarm Join Token from Infisical
       shell: bash
       run: |
         set -e
-        SWARM_JOIN_TOKEN=$(infisical secrets get DOCKER_SWARM_MANAGER_TOKEN --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --plain)
-        if [ -z "$SWARM_JOIN_TOKEN" ]; then
+        TOKEN=$(infisical secrets get DOCKER_SWARM_MANAGER_TOKEN --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --plain)
+        if [ -z "$TOKEN" ]; then
           echo "Failed to retrieve Docker Swarm Manager token from Infisical."
           exit 1
         fi
         echo "Retrieved Swarm Join Token successfully."
-        echo "SWARM_JOIN_TOKEN=$SWARM_JOIN_TOKEN" >> $GITHUB_ENV
-
-        CA_FINGERPRINT=$(infisical secrets get DOCKER_SWARM_CA_FINGERPRINT --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --plain)
-        if [ -z "$CA_FINGERPRINT" ]; then
-          echo "Failed to retrieve CA fingerprint from Infisical."
-          exit 1
-        fi
-        echo "Retrieved CA fingerprint successfully."
-        echo "CA_FINGERPRINT=$CA_FINGERPRINT" >> $GITHUB_ENV
+        echo "SWARM_JOIN_TOKEN=$TOKEN" >> $GITHUB_ENV
 
     - name: Join Docker Swarm Network
       shell: bash
       run: |
         set -e
-        echo "Joining Docker Swarm with token: $SWARM_JOIN_TOKEN and fingerprint: $CA_FINGERPRINT"
-        docker swarm join --token $SWARM_JOIN_TOKEN --ca-hash sha256:$CA_FINGERPRINT ${{ inputs.manager_ip }}:2377
+        echo "Joining Docker Swarm with token: $SWARM_JOIN_TOKEN and fingerprint: ${{ inputs.ca_fingerprint }}"
+        docker swarm join --token $SWARM_JOIN_TOKEN --ca-hash sha256:${{ inputs.ca_fingerprint }} ${{ inputs.manager_ip }}:2377
 
     - name: Deploy Service as Docker Swarm Member
       shell: bash

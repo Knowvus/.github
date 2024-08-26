@@ -60,10 +60,28 @@ runs:
         docker swarm init
         echo "MANAGER_TOKEN=$(docker swarm join-token -q manager)" >> $GITHUB_ENV
 
+    # New Step: Retrieve CA Fingerprint
+    - name: Retrieve Docker Swarm CA Fingerprint
+      shell: bash
+      run: |
+        CA_FINGERPRINT=$(docker swarm ca --fingerprint | awk '{print $2}')
+        echo "CA_FINGERPRINT=$CA_FINGERPRINT" >> $GITHUB_ENV
+
     - name: Save Swarm Join Token to Infisical
       shell: bash
       run: |
         infisical secrets set DOCKER_SWARM_MANAGER_TOKEN="${{ env.MANAGER_TOKEN }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
+
+    # New Step: Save CA Fingerprint to Infisical
+    - name: Save CA Fingerprint to Infisical
+      shell: bash
+      run: |
+        infisical secrets set DOCKER_SWARM_CA_FINGERPRINT="${{ env.CA_FINGERPRINT }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
+
+    - name: Perform Infisical Secrets Group Command
+      shell: bash
+      run: |
+        infisical sg c --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
 
     - name: Create Docker Network
       shell: bash
