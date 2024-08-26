@@ -1,6 +1,6 @@
 # NEXT GOAL
 
-1) Deplpoy Duke with component style yaml
+[x] Deplpoy Duke with component style yaml
 2) Deploy Kerrigan
 3) Test Duke/Kerrigan Endpoints
 4) Launch Website Droplet
