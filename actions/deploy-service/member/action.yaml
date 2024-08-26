@@ -57,13 +57,23 @@ runs:
     - name: Authenticate with Infisical
       shell: bash
       run: |
-        echo "INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain)" >> $GITHUB_ENV
+        INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain)
+        echo "INFISICAL_TOKEN=$INFISICAL_TOKEN" >> $GITHUB_ENV
+
+    - name: Retrieve Swarm Join Token from Infisical
+      shell: bash
+      run: |
+        TOKEN=$(infisical secrets get DOCKER_SWARM_MANAGER_TOKEN --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --plain)
+        if [ -z "$TOKEN" ]; then
+          echo "Failed to retrieve Docker Swarm Manager token from Infisical."
+          exit 1
+        fi
+        echo "Retrieved Swarm Join Token successfully."
 
     - name: Join Docker Swarm Network
       shell: bash
       run: |
-        TOKEN=$(infisical secrets get DOCKER_SWARM_MANAGER_TOKEN --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }})
-        docker swarm join hyperion --token $TOKEN ${{ inputs.manager_ip }}:2377
+        docker swarm join --token $TOKEN ${{ inputs.manager_ip }}:2377
 
     - name: Deploy Service as Docker Swarm Member
       shell: bash
