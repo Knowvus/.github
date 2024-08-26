@@ -82,11 +82,6 @@ runs:
       run: |
         infisical secrets set DOCKER_SWARM_CA_FINGERPRINT="${{ env.CA_FINGERPRINT }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
 
-    - name: Perform Infisical Secrets Group Command
-      shell: bash
-      run: |
-        infisical sg c --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
-
     - name: Create Docker Network
       shell: bash
       run: |
