@@ -65,12 +65,6 @@ runs:
       run: |
         infisical secrets set DOCKER_SWARM_MANAGER_TOKEN="${{ env.MANAGER_TOKEN }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
 
-    # New Step: Sync Tokens with Infisical
-    - name: Sync Tokens with Infisical
-      shell: bash
-      run: |
-        infisical secrets sync --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
-
     - name: Create Docker Network
       shell: bash
       run: |
