@@ -23,6 +23,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Build and Push Docker Image
+      uses: Knowvus/.github/actions/build-and-push@main
+      with:
+        docker_username: ${{ inputs.docker_username }}
+        docker_password: ${{ inputs.docker_password }}
+        docker_image: ${{ inputs.docker_image }}
+
     - name: Install Docker
       uses: docker/setup-buildx-action@v3
 
