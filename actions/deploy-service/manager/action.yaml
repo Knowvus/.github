@@ -65,6 +65,12 @@ runs:
       run: |
         infisical secrets set DOCKER_SWARM_MANAGER_TOKEN="${{ env.MANAGER_TOKEN }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
 
+    - name: Create Docker Network
+      shell: bash
+      run: |
+        docker network inspect hyperion >/dev/null 2>&1 || \
+        docker network create --driver overlay hyperion
+
     - name: Deploy Duke as Docker Service
       shell: bash
       run: |
