@@ -58,8 +58,13 @@ runs:
       shell: bash
       run: |
         MEM_AVAILABLE=$(free -m | awk '/^Mem:/{print $7}')
+        DISK_AVAILABLE=$(df -m / | awk 'NR==2 {print $4}')
         if [ "$MEM_AVAILABLE" -lt 512 ]; then
           echo "Insufficient memory to initialize Docker Swarm. Available: ${MEM_AVAILABLE}MB"
+          exit 1
+        fi
+        if [ "$DISK_AVAILABLE" -lt 1024 ]; then
+          echo "Insufficient disk space to deploy Docker service. Available: ${DISK_AVAILABLE}MB"
           exit 1
         fi
 
@@ -141,9 +146,18 @@ runs:
         sleep 10
         if [ "$(docker service ls --filter name=duke -q)" ]; then
           echo "Duke service is running successfully."
+          docker service ps duke
           docker service logs duke
         else
           echo "Duke service failed to start. Checking logs..."
           docker service logs duke
           exit 1
         fi
+
+    - name: Cleanup Docker Services on Failure
+      if: failure()
+      shell: bash
+      run: |
+        echo "Cleaning up Docker services..."
+        docker service rm duke || true
+        docker swarm leave --force || true
