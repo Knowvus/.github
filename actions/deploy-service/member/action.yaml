@@ -78,19 +78,17 @@ runs:
         fi
         echo "INFISICAL_TOKEN=$INFISICAL_TOKEN" >> $GITHUB_ENV
 
-    - name: Retrieve Swarm Join Token and CA Fingerprint from Infisical
+    - name: Retrieve Swarm Join Token from Infisical
       shell: bash
       run: |
         set -e
         TOKEN=$(infisical secrets get DOCKER_SWARM_MANAGER_TOKEN --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --plain)
-        CA_FINGERPRINT=$(infisical secrets get DOCKER_SWARM_CA_FINGERPRINT --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --plain)
-        if [ -z "$TOKEN" ] || [ -z "$CA_FINGERPRINT" ]; then
-          echo "Failed to retrieve Docker Swarm Manager token or CA Fingerprint from Infisical."
+        if [ -z "$TOKEN" ]; then
+          echo "Failed to retrieve Docker Swarm Manager token from Infisical."
           exit 1
         fi
-        echo "Retrieved Swarm Join Token and CA Fingerprint successfully."
+        echo "Retrieved Swarm Join Token successfully."
         echo "SWARM_JOIN_TOKEN=$TOKEN" >> $GITHUB_ENV
-        echo "SWARM_CA_FINGERPRINT=$CA_FINGERPRINT" >> $GITHUB_ENV
 
     - name: Leave Docker Swarm Network (if part of it)
       shell: bash
@@ -112,8 +110,8 @@ runs:
       shell: bash
       run: |
         set -e
-        echo "Attempting to join Docker Swarm with token: $SWARM_JOIN_TOKEN and CA Fingerprint: $SWARM_CA_FINGERPRINT"
-        docker swarm join --token $SWARM_JOIN_TOKEN --ca-fingerprint $SWARM_CA_FINGERPRINT ${{ inputs.manager_ip }}:2377
+        echo "Attempting to join Docker Swarm with token: $SWARM_JOIN_TOKEN"
+        docker swarm join --token $SWARM_JOIN_TOKEN ${{ inputs.manager_ip }}:2377
 
     - name: Deploy Service as Docker Swarm Member
       shell: bash
