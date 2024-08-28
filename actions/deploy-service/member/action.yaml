@@ -17,7 +17,7 @@ inputs:
     description: 'Infisical Machine Identity Client Secret'
     required: true
   manager_ip:
-    description: 'IP address of the Docker Swarm Manager'
+    description: 'IPv4 or IPv6 address of the Docker Swarm Manager'
     required: true
   project_id:
     description: 'Infisical Project ID'
@@ -110,7 +110,7 @@ runs:
       shell: bash
       run: |
         set -e
-        echo "Joining Docker Swarm with token: $SWARM_JOIN_TOKEN"
+        echo "Attempting to join Docker Swarm with token: $SWARM_JOIN_TOKEN"
         docker swarm join --token $SWARM_JOIN_TOKEN ${{ inputs.manager_ip }}:2377
 
     - name: Deploy Service as Docker Swarm Member
