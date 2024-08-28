@@ -54,13 +54,51 @@ runs:
       run: |
         echo "INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain)" >> $GITHUB_ENV
 
+    - name: Check System Resources
+      shell: bash
+      run: |
+        MEM_AVAILABLE=$(free -m | awk '/^Mem:/{print $7}')
+        if [ "$MEM_AVAILABLE" -lt 512 ]; then
+          echo "Insufficient memory to initialize Docker Swarm. Available: ${MEM_AVAILABLE}MB"
+          exit 1
+        fi
+
+    - name: Check Firewall Configuration
+      shell: bash
+      run: |
+        REQUIRED_PORTS=(2377 7946 4789)
+        for PORT in "${REQUIRED_PORTS[@]}"; do
+          if ! sudo ufw status | grep -q "$PORT"; then
+            echo "Port $PORT is not open. Configuring firewall."
+            sudo ufw allow $PORT
+          fi
+        done
+
     - name: Initialize Docker Swarm Manager
       shell: bash
       run: |
         set -e
+        echo "Leaving existing swarm if present..."
         docker swarm leave --force || true
+        echo "Initializing Docker Swarm..."
         docker swarm init --advertise-addr $(hostname -I | awk '{print $1}') --listen-addr 0.0.0.0:2377
+        if [ "$(docker info --format '{{.Swarm.LocalNodeState}}')" != "active" ]; then
+          echo "Failed to initialize Docker Swarm."
+          exit 1
+        fi
         echo "MANAGER_TOKEN=$(docker swarm join-token -q manager)" >> $GITHUB_ENV
+
+    - name: Retry Swarm Initialization if Inactive
+      shell: bash
+      run: |
+        if [ "$(docker info --format '{{.Swarm.LocalNodeState}}')" != "active" ]; then
+          echo "Swarm inactive. Retrying initialization..."
+          docker swarm init --advertise-addr $(hostname -I | awk '{print $1}') --listen-addr 0.0.0.0:2377
+          if [ "$(docker info --format '{{.Swarm.LocalNodeState}}')" != "active" ]; then
+            echo "Failed to initialize Docker Swarm after retry."
+            exit 1
+          fi
+        fi
 
     - name: Retrieve Docker Swarm CA Fingerprint
       shell: bash
