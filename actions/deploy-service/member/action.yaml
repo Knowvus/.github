@@ -94,11 +94,16 @@ runs:
       shell: bash
       run: |
         set -e
-        if docker info --format '{{.Swarm.LocalNodeState}}' | grep -q "active"; then
+        LOCAL_NODE_STATE=$(docker info --format '{{.Swarm.LocalNodeState}}')
+        if [[ "$LOCAL_NODE_STATE" == "active" ]]; then
           echo "Node is currently part of a Swarm. Leaving Swarm..."
-          docker swarm leave --force
+          if docker swarm leave --force; then
+            echo "Successfully left the swarm."
+          else
+            echo "Error leaving swarm, but continuing..."
+          fi
         else
-          echo "Node is not part of any Swarm."
+          echo "Node is not part of any Swarm. Current state: $LOCAL_NODE_STATE"
         fi
 
     - name: Join Docker Swarm Network
