@@ -57,10 +57,11 @@ runs:
     - name: Initialize Docker Swarm Manager
       shell: bash
       run: |
-        docker swarm init
+        set -e
+        docker swarm leave --force || true
+        docker swarm init --advertise-addr $(hostname -I | awk '{print $1}') --listen-addr 0.0.0.0:2377
         echo "MANAGER_TOKEN=$(docker swarm join-token -q manager)" >> $GITHUB_ENV
 
-    # Updated Step: Retrieve CA Fingerprint
     - name: Retrieve Docker Swarm CA Fingerprint
       shell: bash
       run: |
