@@ -113,7 +113,7 @@ runs:
       run: |
         set -e
         echo "Attempting to join Docker Swarm with token: $SWARM_JOIN_TOKEN"
-        docker swarm join --token $SWARM_JOIN_TOKEN --ca-hash sha256:$SWARM_CA_FINGERPRINT ${{ inputs.manager_ip }}:2377
+        docker swarm join --token $SWARM_JOIN_TOKEN --ca-fingerprint $SWARM_CA_FINGERPRINT ${{ inputs.manager_ip }}:2377
 
     - name: Deploy Service as Docker Swarm Member
       shell: bash
