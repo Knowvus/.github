@@ -32,7 +32,7 @@ runs:
         sudo apt-get autoremove -y
         sudo apt-get autoclean -y
 
-- name: Remove conflicting Docker packages
+    - name: Remove conflicting Docker packages
       shell: bash
       run: |
         sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
