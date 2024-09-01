@@ -23,6 +23,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Unhold potentially held Docker-related packages
+      shell: bash
+      run: |
+        sudo apt-mark unhold docker-ce docker-ce-cli containerd.io || true
+        
     - name: Remove conflicting Docker packages and fix broken packages
       shell: bash
       run: |
