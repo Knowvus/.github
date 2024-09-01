@@ -35,6 +35,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Remove conflicting Docker packages
+      shell: bash
+      run: |
+        sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
+
     - name: Install Docker
       shell: bash
       run: |
