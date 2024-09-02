@@ -15,3 +15,11 @@
 7) Create Download Action w/Text file
 8) Integate Website with UI
 9) Launch Modal
+
+# USEFUL COMMANDS
+
+Libraries
+```
+apt install net-tools
+- ifconfig
+```
