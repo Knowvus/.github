@@ -23,22 +23,22 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install Infisical CLI
+    - name: Install Dependencies
       shell: bash
       run: |
         curl -1sLf 'https://dl.cloudsmith.io/public/infisical/infisical-cli/setup.deb.sh' | sudo -E bash
-        sudo apt-get update && sudo apt-get install -y infisical
+        sudo apt-get update && sudo apt-get install -y infisical docker.io containerd ufw net-tools
     
     - name: Authenticate with Infisical
       shell: bash
       run: |
         echo "INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --env=dev --silent --plain)" >> $GITHUB_ENV
 
-    - name: Install Docker
-      shell: bash
-      run: |
-        sudo apt update
-        sudo apt install docker.io -y
+    # - name: Install Docker
+    #   shell: bash
+    #   run: |
+    #     sudo apt update && sudo apt-get install -y containerd
+    #     sudo apt install docker.io -y
     
     - name: Login to Docker Hub
       uses: docker/login-action@v3
