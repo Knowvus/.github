@@ -18,6 +18,11 @@
 
 # USEFUL COMMANDS
 
+Infisical
+- Default enviornment is dev
+- 3 enviornemnts exist - dev, staging, prod
+
+
 Libraries
 ```
 apt install net-tools

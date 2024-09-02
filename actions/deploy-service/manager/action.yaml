@@ -32,7 +32,7 @@ runs:
     - name: Authenticate with Infisical
       shell: bash
       run: |
-        echo "INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain)" >> $GITHUB_ENV
+        echo "INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain --env=dev)" >> $GITHUB_ENV
 
     - name: Install Docker
       shell: bash
@@ -114,12 +114,12 @@ runs:
     - name: Save Swarm Join Token to Infisical
       shell: bash
       run: |
-        infisical secrets set DOCKER_SWARM_MANAGER_TOKEN="${{ env.MANAGER_TOKEN }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
+        infisical secrets set DOCKER_SWARM_MANAGER_TOKEN="${{ env.MANAGER_TOKEN }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --env=dev
 
     - name: Save CA Fingerprint to Infisical
       shell: bash
       run: |
-        infisical secrets set DOCKER_SWARM_CA_FINGERPRINT="${{ env.CA_FINGERPRINT }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }}
+        infisical secrets set DOCKER_SWARM_CA_FINGERPRINT="${{ env.CA_FINGERPRINT }}" --token $INFISICAL_TOKEN --projectId ${{ inputs.project_id }} --env=dev
 
     - name: Create Docker Network
       shell: bash
