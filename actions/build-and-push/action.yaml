@@ -11,15 +11,6 @@ inputs:
   docker_password:
     description: 'Docker Hub password'
     required: true
-  infisical_client_id:
-    description: 'Infisical Client ID'
-    required: true
-  infisical_client_secret:
-    description: 'Infisical Client Secret'
-    required: true
-  project_id:
-    description: 'Infisical Project ID'
-    required: true
 
 runs:
   using: "composite"
