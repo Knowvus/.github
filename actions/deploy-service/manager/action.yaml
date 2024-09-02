@@ -32,17 +32,15 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install SSH Client
+    - name: Install SSH Client & Add SSH Key
       shell: bash
       run: |
         sudo apt-get update && sudo apt-get install -y openssh-client
-
-    - name: Add SSH Key
-      run: |
         echo "${{ inputs.ssh_private_key }}" > id_rsa
         chmod 600 id_rsa
 
     - name: Install Dependencies on Droplet
+      shell: bash
       run: |
         ssh -i id_rsa -o StrictHostKeyChecking=no ${{ inputs.ssh_user }}@${{ inputs.droplet_ip }} << 'EOF'
           sudo apt-get update
@@ -50,6 +48,7 @@ runs:
         EOF
 
     - name: Authenticate with Infisical and Save Token
+      shell: bash
       run: |
         ssh -i id_rsa -o StrictHostKeyChecking=no ${{ inputs.ssh_user }}@${{ inputs.droplet_ip }} << 'EOF'
           INFISICAL_TOKEN=$(infisical login --method=universal-auth --client-id=${{ inputs.infisical_client_id }} --client-secret=${{ inputs.infisical_client_secret }} --silent --plain)
@@ -58,6 +57,7 @@ runs:
         EOF
 
     - name: Initialize Docker Swarm and Deploy Service on Droplet
+      shell: bash
       run: |
         ssh -i id_rsa -o StrictHostKeyChecking=no ${{ inputs.ssh_user }}@${{ inputs.droplet_ip }} << 'EOF'
           echo "${{ inputs.docker_password }}" | docker login -u "${{ inputs.docker_username }}" --password-stdin
@@ -83,6 +83,7 @@ runs:
         EOF
 
     - name: Check if Duke Service is Running
+      shell: bash
       run: |
         ssh -i id_rsa -o StrictHostKeyChecking=no ${{ inputs.ssh_user }}@${{ inputs.droplet_ip }} << 'EOF'
           sleep 10
@@ -98,6 +99,7 @@ runs:
         EOF
 
     - name: Cleanup Docker Services on Failure
+      shell: bash
       if: failure()
       run: |
         ssh -i id_rsa -o StrictHostKeyChecking=no ${{ inputs.ssh_user }}@${{ inputs.droplet_ip }} << 'EOF'
