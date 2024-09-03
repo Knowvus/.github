@@ -67,16 +67,19 @@ runs:
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:${{ github.sha }}
 
     - name: Install doctl
+      shell: bash
       run: |
         echo "Installing doctl..."
         sudo snap install doctl
 
     - name: Authenticate with DigitalOcean
+      shell: bash
       run: |
         echo "Authenticating with DigitalOcean..."
         doctl auth init -t ${{ inputs.digital_ocean_token }}
 
     - name: Tag and Push Docker Image to DigitalOcean Registry
+      shell: bash
       run: |
         echo "Tagging and pushing Docker image to DigitalOcean..."
         REGISTRY_NAME="registry.digitalocean.com/Knowvus"
