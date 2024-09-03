@@ -67,7 +67,7 @@ runs:
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:${{ github.sha }}
 
     - name: Install doctl
-      uses: digitalocean/action-doctl@v2  # GitHub action to install doctl
+      uses: digitalocean/action-doctl@v2
       with:
         token: ${{ inputs.digital_ocean_token }}
 
