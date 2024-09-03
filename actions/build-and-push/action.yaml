@@ -15,8 +15,11 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout code
+    - name: Checkout foreign repository (to get Dockerfile and docker-compose.yaml)
       uses: actions/checkout@v3
+      with:
+        repository: knowvus/.github
+        path: .github
 
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
@@ -57,7 +60,8 @@ runs:
     - name: Build and push Docker image to Docker Hub
       uses: docker/build-push-action@v4
       with:
-        context: .
+        context: .github
+        file: .github/Dockerfile
         push: true
         tags: |
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:latest
