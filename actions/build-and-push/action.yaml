@@ -1,5 +1,5 @@
 name: 'Build and Push Docker Image'
-description: 'Build and push a Docker image to Docker Hub'
+description: 'Build and push a Docker image to Docker Hub and DigitalOcean Registry'
 
 inputs:
   service_name:
@@ -10,6 +10,9 @@ inputs:
     required: true
   docker_password:
     description: 'Docker Hub password'
+    required: true
+  digital_ocean_token:
+    description: 'Digital Ocean token'
     required: true
 
 runs:
@@ -54,7 +57,7 @@ runs:
         username: ${{ inputs.docker_username }}
         password: ${{ inputs.docker_password }}
 
-    - name: Build and push Docker image
+    - name: Build and push Docker image to Docker Hub
       uses: docker/build-push-action@v4
       with:
         context: .
@@ -62,3 +65,21 @@ runs:
         tags: |
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:latest
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:${{ github.sha }}
+
+    - name: Install doctl
+      run: |
+        echo "Installing doctl..."
+        sudo snap install doctl
+
+    - name: Authenticate with DigitalOcean
+      run: |
+        echo "Authenticating with DigitalOcean..."
+        doctl auth init -t ${{ inputs.digital_ocean_token }}
+
+    - name: Tag and Push Docker Image to DigitalOcean Registry
+      run: |
+        echo "Tagging and pushing Docker image to DigitalOcean..."
+        REGISTRY_NAME="registry.digitalocean.com/Knowvus"
+        docker tag ${{ inputs.docker_username }}/${{ inputs.service_name }}:latest $REGISTRY_NAME/${{ inputs.service_name }}:latest
+        echo ${{ inputs.digital_ocean_token }} | docker login $REGISTRY_NAME -u doctl --password-stdin
+        docker push $REGISTRY_NAME/${{ inputs.service_name }}:latest
