@@ -67,22 +67,22 @@ runs:
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:${{ github.sha }}
 
     - name: Install doctl
-      shell: bash
-      run: |
-        echo "Installing doctl..."
-        sudo snap install doctl
+      uses: digitalocean/action-doctl@v2  # GitHub action to install doctl
+      with:
+        token: ${{ inputs.digital_ocean_token }}
 
-    - name: Authenticate with DigitalOcean
-      shell: bash
-      run: |
-        echo "Authenticating with DigitalOcean..."
-        doctl auth init -t ${{ inputs.digital_ocean_token }}
+    - name: Docker login to DigitalOcean Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: registry.digitalocean.com
+        username: doctl
+        password: ${{ inputs.digital_ocean_token }}
 
-    - name: Tag and Push Docker Image to DigitalOcean Registry
-      shell: bash
-      run: |
-        echo "Tagging and pushing Docker image to DigitalOcean..."
-        REGISTRY_NAME="registry.digitalocean.com/Knowvus"
-        docker tag ${{ inputs.docker_username }}/${{ inputs.service_name }}:latest $REGISTRY_NAME/${{ inputs.service_name }}:latest
-        echo ${{ inputs.digital_ocean_token }} | docker login $REGISTRY_NAME -u doctl --password-stdin
-        docker push $REGISTRY_NAME/${{ inputs.service_name }}:latest
+    - name: Build and push Docker image to DigitalOcean Registry
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          registry.digitalocean.com/Knowvus/${{ inputs.service_name }}:latest
+          registry.digitalocean.com/Knowvus/${{ inputs.service_name }}:${{ github.sha }}
