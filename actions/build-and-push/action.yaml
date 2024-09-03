@@ -11,9 +11,6 @@ inputs:
   docker_password:
     description: 'Docker Hub password'
     required: true
-  digital_ocean_token:
-    description: 'Digital Ocean token'
-    required: true
 
 runs:
   using: "composite"
@@ -65,24 +62,3 @@ runs:
         tags: |
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:latest
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:${{ github.sha }}
-
-    - name: Install doctl
-      uses: digitalocean/action-doctl@v2
-      with:
-        token: ${{ inputs.digital_ocean_token }}
-
-    - name: Docker login to DigitalOcean Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: registry.digitalocean.com
-        username: doctl
-        password: ${{ inputs.digital_ocean_token }}
-
-    - name: Build and push Docker image to DigitalOcean Registry
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: |
-          registry.digitalocean.com/Knowvus/${{ inputs.service_name }}:latest
-          registry.digitalocean.com/Knowvus/${{ inputs.service_name }}:${{ github.sha }}
