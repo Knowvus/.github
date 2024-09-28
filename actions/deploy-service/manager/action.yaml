@@ -63,6 +63,7 @@ runs:
           with:
             host: ${{ inputs.manager_ip }}
             username: root
+            key: ${{ inputs.ssh_key }} 
             password: ${{ inputs.manager_root_password }}
             source: ".env,docker-compose.yaml,Dockerfile"
             target: "/root/${{ inputs.service_name }}/"
