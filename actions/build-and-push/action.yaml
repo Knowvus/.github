@@ -60,7 +60,7 @@ runs:
         context: .
         push: true
         build-args:
-          service_name: ${{ inputs.service_name }}
+          service_name=${{ inputs.service_name }}
         tags: |
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:latest
           ${{ inputs.docker_username }}/${{ inputs.service_name }}:${{ github.sha }}
